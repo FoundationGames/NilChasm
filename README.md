@@ -28,8 +28,8 @@ and then be attached to an IDE for code hotswap. **You will have to restart the
 game every time you make changes to your mod**.
 
 ## How do I decompile the game?
-**You can't.** Nil assumes you have an IDE plugin to decompile code with your
-preferred decompiler.
+Pass `-Pnil.decompile` when running your initial Gradle command to generate a
+sources jar. You may need to delete `build/nil`.
 
 ## Another note
 NilGradle is very primitive at the moment, and can quite easily get confused.
