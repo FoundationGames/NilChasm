@@ -1,5 +1,5 @@
 plugins {
-	id 'com.unascribed.nilgradle' version '1.2.3'
+	id 'com.unascribed.nilgradle' version '1.3.0'
 }
 
 // You can change this to be higher if you like. NilLoader itself is compiled
@@ -43,7 +43,7 @@ nil {
 }
 
 dependencies {
-	loader 'com.unascribed:nilloader:1.1.2'
+	loader 'com.unascribed:nilloader:1.2.0'
 
 	// Any version available in the vanilla launcher can be put here, or...
 	game nil.minecraft('1.4.7', 'client')
