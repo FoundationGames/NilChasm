@@ -1,0 +1,8 @@
+{
+  "classes": [
+    "net/minecraft/client/main/Main"
+  ],
+  "transformers": [
+    "transform_main.chasm"
+  ]
+}

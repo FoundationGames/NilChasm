@@ -1,0 +1,11 @@
+@nilmod {
+	/* There is no id field. The filename defines the id of the mod. */
+	name: "NilChasm";
+	description: "Load QuiltMC's CHASM library as a NilLoader mod";
+	authors: "FoundationGames";
+	version: "${version}";
+}
+
+entrypoints {
+	premain: "foundationgames.nilchasm.NilChasmPremain";
+}

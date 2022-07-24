@@ -1,0 +1,21 @@
+{
+    id: "transform_main",
+    target_class: classes[c -> c.name = "net/minecraft/client/main/Main"][0],
+    transformations: [
+        {
+            target: {
+                node: target_class.methods[m -> m.name = "main"][0].code.instructions,
+                start: 0, end: 0
+            },
+            apply: args -> [
+                {
+                    opcode: 184,
+                    owner: "foundationgames/nilchasm/NilChasmPremain",
+                    name: "printSuccessMessage",
+                    descriptor: "()V",
+					isInterface: false
+                },
+            ]
+        }
+    ]
+}
