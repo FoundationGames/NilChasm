@@ -4,34 +4,28 @@ import foundationgames.nilchasm.NilChasmPremain;
 import foundationgames.nilchasm.api.NilChasm;
 import nilloader.NilLoader;
 import nilloader.api.ClassTransformer;
-import nilloader.api.lib.nanojson.JsonObject;
+import nilloader.api.lib.asm.ClassReader;
 import nilloader.api.lib.nanojson.JsonParser;
 import nilloader.api.lib.nanojson.JsonParserException;
-import nilloader.api.lib.nanojson.JsonReader;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 import org.quiltmc.chasm.api.ChasmProcessor;
 import org.quiltmc.chasm.api.ClassData;
 import org.quiltmc.chasm.api.Transformer;
-import org.quiltmc.chasm.api.metadata.MetadataProvider;
 import org.quiltmc.chasm.api.util.ClassLoaderClassInfoProvider;
 import org.quiltmc.chasm.internal.transformer.ChasmLangTransformer;
-import org.quiltmc.chasm.lang.Evaluator;
-import org.quiltmc.chasm.lang.op.Expression;
+import org.quiltmc.chasm.lang.api.ast.Node;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 public class NilChasmTransformer implements ClassTransformer, NilChasm {
     public static final NilChasmTransformer INSTANCE = new NilChasmTransformer();
 
     private final ClassLoader classLoader = this.getClass().getClassLoader();
 
-    private final Evaluator evaluator = new Evaluator();
     private final ChasmProcessor processor = new ChasmProcessor(new ClassLoaderClassInfoProvider(null, this.classLoader));
 
     private boolean processed = false;
@@ -54,9 +48,10 @@ public class NilChasmTransformer implements ClassTransformer, NilChasm {
     private void process() {
         var classes = this.processor.process();
         for (var data : classes) {
-            var className = data.getMetadataProvider().get(ClassNameMetadata.class).name();
+            var bytes = data.getClassBytes();
+            var classReader = new ClassReader(bytes);
 
-            this.transformed.put(className, data.getClassBytes());
+            this.transformed.put(classReader.getClassName(), bytes);
         }
 
         this.processed = true;
@@ -89,16 +84,16 @@ public class NilChasmTransformer implements ClassTransformer, NilChasm {
                         }
                     }
                     for (int i = 0; i < transformers.size(); i++) {
-                        var transfName = transformers.getString(i);
-                        if (transfName != null) {
-                            try (var transformer = modClsLoader.getResourceAsStream("chasm/"+mod+"/"+transfName)) {
+                        var transfId = transformers.getString(i);
+                        if (transfId != null) {
+                            try (var transformer = modClsLoader.getResourceAsStream("chasm/"+mod+"/"+transfId)) {
                                 if (transformer != null) {
-                                    this.addTransformer(CharStreams.fromStream(transformer));
+                                    this.addTransformer(transfId, new String(transformer.readAllBytes(), StandardCharsets.UTF_8));
                                 } else {
-                                    NilChasmPremain.LOG.error("Could not find transformer '{}' requested by mod '{}'", transfName, mod);
+                                    NilChasmPremain.LOG.error("Could not find transformer '{}' requested by mod '{}'", transfId, mod);
                                 }
                             } catch (IOException e) {
-                                NilChasmPremain.LOG.error("Error loading transformer '{}' from mod '{}': {}", transfName, mod, e.getMessage());
+                                NilChasmPremain.LOG.error("Error loading transformer '{}' from mod '{}': {}", transfId, mod, e.getMessage());
                             }
                         }
                     }
@@ -117,10 +112,7 @@ public class NilChasmTransformer implements ClassTransformer, NilChasm {
     public void addClass(String className) {
         try (var resource = classLoader.getResourceAsStream(className + ".class")) {
             if (resource != null) {
-                var metadata = new MetadataProvider();
-                metadata.put(ClassNameMetadata.class, new ClassNameMetadata(className));
-
-                this.processor.addClass(new ClassData(resource.readAllBytes(), metadata));
+                this.processor.addClass(new ClassData(resource.readAllBytes()));
                 this.registered.add(className);
             } else {
                 NilChasmPremain.LOG.error("Could not find class '" + className + "'");
@@ -131,12 +123,12 @@ public class NilChasmTransformer implements ClassTransformer, NilChasm {
     }
 
     @Override
-    public void addTransformer(CharStream transformerExpression) {
-        this.addTransformer(eval -> new ChasmLangTransformer(eval, Expression.parse(transformerExpression)));
+    public void addTransformer(String id, String expr) {
+        this.addTransformer(new ChasmLangTransformer(id, Node.parse(expr)));
     }
 
     @Override
-    public void addTransformer(Function<Evaluator, Transformer> transformerProvider) {
-        this.processor.addTransformer(transformerProvider.apply(this.evaluator));
+    public void addTransformer(Transformer transformer) {
+        this.processor.addTransformer(transformer);
     }
 }

@@ -8,7 +8,7 @@ targetCompatibility = 17
 
 group = 'foundationgames'
 archivesBaseName = 'nilchasm'
-version = '0.0.1'
+version = '0.0.2'
 
 repositories {
 	mavenCentral()
@@ -32,9 +32,8 @@ dependencies {
 	loader 'com.unascribed:nilloader:1.2.1'
 	game nil.minecraft('1.19', 'client')
 
-	implementation 'org.antlr:antlr4:4.9.3'
-	implementation 'org.quiltmc.chasm:chasm:0.0.1-SNAPSHOT'
-	implementation 'org.quiltmc.chasm:chasm-lang:0.0.1-SNAPSHOT'
+	implementation 'org.quiltmc.chasm:chasm:0.1.0-SNAPSHOT'
+	implementation 'org.quiltmc.chasm:chassembly:0.1.0-SNAPSHOT'
 }
 
 mappings {

@@ -1,5 +1,4 @@
 {
-    id: "transform_main",
     target_class: classes[c -> c.name = "net/minecraft/client/main/Main"][0],
     transformations: [
         {
@@ -14,7 +13,7 @@
                     name: "printSuccessMessage",
                     descriptor: "()V",
 					isInterface: false
-                },
+                }
             ]
         }
     ]

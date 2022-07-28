@@ -1,11 +1,7 @@
 package foundationgames.nilchasm.api;
 
 import foundationgames.nilchasm.internal.NilChasmTransformer;
-import org.antlr.v4.runtime.CharStream;
 import org.quiltmc.chasm.api.Transformer;
-import org.quiltmc.chasm.lang.Evaluator;
-
-import java.util.function.Function;
 
 public interface NilChasm {
     /**
@@ -31,10 +27,10 @@ public interface NilChasm {
     /**
      * Manually add a transformer from a char stream
      */
-    void addTransformer(CharStream transformerExpression);
+    void addTransformer(String id, String expr);
 
     /**
-     * Manually add a custom transformer, with a CHASM evaluator for context
+     * Manually add a custom transformer
      */
-    void addTransformer(Function<Evaluator, Transformer> transformerProvider);
+    void addTransformer(Transformer transformer);
 }
