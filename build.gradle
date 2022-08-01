@@ -8,7 +8,7 @@ targetCompatibility = 17
 
 group = 'foundationgames'
 archivesBaseName = 'nilchasm'
-version = '0.0.2'
+version = '0.0.2+chasmix.0.0.2'
 
 repositories {
 	mavenCentral()
@@ -19,8 +19,13 @@ repositories {
 		}
 	}
 	maven {
+		url 'https://maven.fabricmc.net/'
+	}
+	maven {
 		url 'https://maven.quiltmc.org/repository/snapshot/'
 	}
+
+	maven { url 'https://jitpack.io' }
 }
 
 nil {
@@ -32,8 +37,20 @@ dependencies {
 	loader 'com.unascribed:nilloader:1.2.1'
 	game nil.minecraft('1.19', 'client')
 
-	implementation 'org.quiltmc.chasm:chasm:0.1.0-SNAPSHOT'
-	implementation 'org.quiltmc.chasm:chassembly:0.1.0-SNAPSHOT'
+	implementation 'com.google.guava:guava:21.0'
+	implementation 'com.google.code.gson:gson:2.2.4'
+
+	implementation "org.ow2.asm:asm-tree:9.2"
+	implementation "org.ow2.asm:asm-commons:9.2"
+	implementation "org.ow2.asm:asm-util:9.2"
+
+	//implementation 'org.quiltmc.chasm:chasm:0.1.0-SNAPSHOT'
+	//implementation 'org.quiltmc.chasm:chassembly:0.1.0-SNAPSHOT'
+
+	implementation 'com.github.QuiltMC:chasm:4d7fe71ad6'
+
+	// https://github.com/FoundationGames/Mixin/tree/chasmix
+	implementation files('dep/sponge-mixin-0.11.4+mixin.0.8.5+chasmix.0.0.2-local.jar')
 }
 
 mappings {

@@ -1,8 +1,9 @@
 {
   "classes": [
-    "net/minecraft/client/main/Main"
+    "foundationgames/nilchasm/chasmix/test/TestTargetClass",
+    "foundationgames/nilchasm/mixin/ExampleMixin"
   ],
   "transformers": [
-    "transform_main.chasm"
+    "test.chasm"
   ]
 }

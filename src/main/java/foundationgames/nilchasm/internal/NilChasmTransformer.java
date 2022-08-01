@@ -2,9 +2,13 @@ package foundationgames.nilchasm.internal;
 
 import foundationgames.nilchasm.NilChasmPremain;
 import foundationgames.nilchasm.api.NilChasm;
+import io.github.foundationgames.chasmix.mixin.ClassLoadTracker;
 import nilloader.NilLoader;
 import nilloader.api.ClassTransformer;
 import nilloader.api.lib.asm.ClassReader;
+import nilloader.api.lib.asm.ClassWriter;
+import nilloader.api.lib.asm.tree.AnnotationNode;
+import nilloader.api.lib.asm.tree.ClassNode;
 import nilloader.api.lib.nanojson.JsonParser;
 import nilloader.api.lib.nanojson.JsonParserException;
 import org.quiltmc.chasm.api.ChasmProcessor;
@@ -13,6 +17,7 @@ import org.quiltmc.chasm.api.Transformer;
 import org.quiltmc.chasm.api.util.ClassLoaderClassInfoProvider;
 import org.quiltmc.chasm.internal.transformer.ChasmLangTransformer;
 import org.quiltmc.chasm.lang.api.ast.Node;
+import org.spongepowered.asm.mixin.Mixin;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class NilChasmTransformer implements ClassTransformer, NilChasm {
     public static final NilChasmTransformer INSTANCE = new NilChasmTransformer();
@@ -38,15 +44,17 @@ public class NilChasmTransformer implements ClassTransformer, NilChasm {
         if (!this.processed && this.registered.contains(className)) {
             this.process();
         }
+        ClassLoadTracker.markLoaded(className);
 
         if (this.transformed.containsKey(className)) {
             return this.transformed.get(className);
         }
+
         return originalData;
     }
 
     private void process() {
-        var classes = this.processor.process();
+        var classes = this.processor.process(true);
         for (var data : classes) {
             var bytes = data.getClassBytes();
             var classReader = new ClassReader(bytes);
